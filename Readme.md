@@ -1,6 +1,6 @@
 # Task List
 
-    El proyecto de task list es una lista de tareas, donde uno se autentica con un usuario y puede administrar sus tareas, contiene filtros de busqueda por palabras y por estado de la tarea
+El proyecto de task list es una lista de tareas, donde uno se autentica con un usuario y puede administrar sus tareas, contiene filtros de busqueda por palabras y por estado de la tarea
 
 ## Tecnologías Usadas
 
@@ -21,40 +21,50 @@ Sigue estos pasos para configurar el proyecto en tu entorno local:
 
 1. **Clona el repositorio**:
 
-    ```Bash
-
+```Bash
     git clone https://github.com/jotade13/task-list
     cd task-list
-    ```
+```
 
-Instalar dependencias del Back
+2. **Instalar dependencias del Back**
 
+```Bash
     cd task-list-api
     composer install
+```
 
-Copia el archivo .env.example a .env y configura las variables de entorno necesarias (como la conexión a la base de datos).
+3. **Copia el archivo .env.example a .env y configura las variables de entorno necesarias (como la conexión a la base de datos).**
 
+```Bash
     php artisan key:generate
     php artisan migrate
+```
 
-Inicia el servidor de desarrollo:
+4. **Inicia el servidor de desarrollo:**
 
-    frontend
+Backend
 
+```Bash
+    php artisan serve
+```
+
+Frontend
+
+```Bash
+    cd ../task-list
     npm run dev
+```
 
-    Backend
-    cd ../php artisan serve
-
-    Accede a la aplicación:
+Accede a la aplicación:
 
 El Back-end estará disponible en http://localhost:8000.
 
 El Front-end estará disponible en http://localhost:3000.
 
-Estructura del Proyecto
+## Estructura del Proyecto
+
 task-list-api/: Contiene el código fuente del Back-end desarrollado con Laravel.
 
 task-list/: Contiene el código fuente del Front-end desarrollado con React, Vite, React Router y MUI.
 
-Gracias por ver este proyecto, Fue un reto para mi crecimiento como desarrollador
+Gracias por ver este proyecto. Fue un reto para mi crecimiento como desarrollador
