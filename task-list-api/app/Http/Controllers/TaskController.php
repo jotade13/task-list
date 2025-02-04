@@ -30,23 +30,51 @@ class TaskController extends Controller
 
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $user = auth()->user();
+        try {
+            $user = auth()->user();
 
-        if (!$user) {
+            $tasks = Task::where('user_id', $user->id);
+
+            if ($request->has('search')) {
+                $searchTerm = $request->input('search');
+                $tasks->where(function ($query) use ($searchTerm) {
+                    $query->where('title', 'LIKE', "%$searchTerm%")
+                        ->orWhere('description', 'LIKE', "%$searchTerm%");
+                });
+            }
+
+            if ($request->has('status')) {
+                $status = $request->input('status');
+                $tasks->where('status', $status);
+            }
+
+            $tasks = $tasks->get();
+
+            if ($tasks->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontraron tareas que coincidan con los filtros.',
+                    'tasks'    => [],
+                ], 200);
+            }
+
+            // Retornar la respuesta con los resultados
             return response()->json([
-                'res' => false,
-                'msg' => 'Unauthenticated User'
-            ], 401); 
+                'success' => true,
+                'message' => 'Tareas encontradas exitosamente.',
+                'tasks'    => $tasks,
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Manejar errores inesperados
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al obtener las tareas.',
+                'error'   => $e->getMessage(),
+            ], 500);
         }
-
-        $tasks = $user->tasks;
-
-        return response()->json([
-            'res' => true,
-            'tasks' => $tasks
-        ], 200); 
     }
 
     public function update(UpdateTaskRequest $request, Task $task)
@@ -65,5 +93,51 @@ class TaskController extends Controller
             'res' => true,
             'msg' => 'Task deleted successfully'
         ],200);
+    }
+
+
+     public function status(Request $request)
+    {
+        $request->validate([
+            'status' => 'required|string|max:255',
+        ]);
+        $user = auth()->user();
+
+        $searchTerm = $request->input('status');
+
+        echo
+        
+        $tasks = Task::where('user_id', $user["id"]) 
+                     ->where(function ($query) use ($searchTerm) {
+                         $query->where('status', 'LIKE', "%{$searchTerm}%");
+                     })->get();
+
+
+        return response()->json([
+            'success' => true,
+            'data' => $tasks,
+        ]);
+    }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'search' => 'required|string|max:255',
+        ]);
+        $user = auth()->user();
+
+        $searchTerm = $request->input('search');
+
+        
+        $tasks = Task::where('user_id', $user["id"]) 
+                     ->where(function ($query) use ($searchTerm) {
+                         $query->where('title', 'LIKE', "%$searchTerm%")->orWhere('description', 'LIKE', "%$searchTerm%");
+                     })->get();
+
+
+        return response()->json([
+            'success' => true,
+            'data' => $tasks,
+        ]);
     }
 }
